@@ -19,6 +19,7 @@ public enum SimpleStateMachine
 
 public enum ComboState
 {
+    None,
     Attack1,
     Attack2,
     Attack3,
@@ -29,6 +30,7 @@ public class TestScript : MonoBehaviour
 {
     [Header("State Machine")]
     public SimpleStateMachine currentState;
+    public ComboState currentComboState;
     public Animator animator;
 
     [Header("Player Settings")]
@@ -43,11 +45,16 @@ public class TestScript : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         input = GetComponent<PlayerInputController>();
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        switch(currentState)
+        //HandleInputs();
+        //moveDirection = GetMoveDirection(movementInput);
+        //SetGravity();
+        //characterController.Move(moveDirection * Time.deltaTime);
+        switch (currentState)
         {
             case SimpleStateMachine.Idle:
                 HandleInputs();
@@ -61,16 +68,16 @@ public class TestScript : MonoBehaviour
                     //else
                     //    currentState = SimpleStateMachine.Moving;
                 }
-                if(jumpInput && isGrounded)
+                if (jumpInput && isGrounded)
                 {
                     Jump();
                     currentState = SimpleStateMachine.Jumping;
                 }
-                if(dashInput) //Add a flag for canDash
+                if (dashInput) //Add a flag for canDash
                 {
                     currentState = SimpleStateMachine.Dashing;
                 }
-                if(lightAttackInput)
+                if (lightAttackInput)
                 {
                     StartAttack();
                     currentState = SimpleStateMachine.Attacking;
@@ -116,7 +123,7 @@ public class TestScript : MonoBehaviour
                 break;
             case SimpleStateMachine.Dashing:
                 Dash();
-                if(dashingTime >= dashlength)
+                if (dashingTime >= dashlength)
                 {
                     dashingTime = 0f;
                     currentState = SimpleStateMachine.Moving;
@@ -124,8 +131,10 @@ public class TestScript : MonoBehaviour
                 break;
             case SimpleStateMachine.Attacking:
                 HandleInputs();
-                if (animator.GetBool("Attack") == false)
-                    currentState = SimpleStateMachine.Moving;
+                ComboAttacks();
+                ResetComboState();
+                //if (animator.GetBool("Attack") == false)
+                //    currentState = SimpleStateMachine.Moving;
                 break;
             case SimpleStateMachine.Falling:
                 HandleInputs();
@@ -145,7 +154,7 @@ public class TestScript : MonoBehaviour
     public void HandleInputs()
     {
         movementInput = input.Current.MoveInputRaw;
-        isGrounded = characterController.isGrounded;
+        isGrounded = GetGroundedStatus();
         jumpInput = input.Current.JumpInput;
         dashInput = input.Current.DashInput;
 
@@ -166,22 +175,49 @@ public class TestScript : MonoBehaviour
 
     [Header("Movement Debug")]
     public Vector3 moveDirection;
+    public Vector3 camForwad;
+    public Vector3 camRight;
+
+    private void GetCamDirection()
+    {
+        camForwad = playerMainCamera.forward;
+        camRight = playerMainCamera.right;
+
+        camForwad.y = 0;
+        camRight.y = 0;
+    }
 
     private Vector3 GetMoveDirection(Vector3 input)
     {
-        if(input.sqrMagnitude > 0f)
+        GetCamDirection();
+
+        if (input.sqrMagnitude > 0f)
         {
             float targetAngle = Mathf.Atan2(input.x, input.z) * Mathf.Rad2Deg + playerMainCamera.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
 
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-            return (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * movementSpeed;
+            return (input.x * camRight + input.z * camForwad) * movementSpeed;
         }
         else
         {
             return Vector3.zero;
-        }    
+        }
+        
+        //if(input.sqrMagnitude > 0f)
+        //{
+        //    float targetAngle = Mathf.Atan2(input.x, input.z) * Mathf.Rad2Deg + playerMainCamera.eulerAngles.y;
+        //    float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+
+        //    transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+        //    return (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * movementSpeed;
+        //}
+        //else
+        //{
+        //    return Vector3.zero;
+        //}    
     }
     #endregion
 
@@ -275,15 +311,62 @@ public class TestScript : MonoBehaviour
     #endregion
 
     #region Attacks
+    [Header("Combo Attacks Debug")]
+    public bool activateTimerToReset;
+    public float defaultComboTimer = 0.4f;
+    public float currentComboTimer;
 
     public void StartAttack()
     {
+        animator.applyRootMotion = true;
         animator.SetBool("Attack", true);
     }
     public void AttackFinished()
     {
+        animator.applyRootMotion = false;
         Debug.Log("Attack finished");
         animator.SetBool("Attack", false);
+    }
+
+    public void ComboAttacks()
+    {
+        if(currentComboState <= ComboState.Attack3)
+        {
+            currentComboState++;
+            activateTimerToReset = true;
+            currentComboTimer = defaultComboTimer;
+
+            if(currentComboState == ComboState.Attack1)
+            {
+                //Set Animator Attack 1
+            }
+            else if (currentComboState == ComboState.Attack2)
+            {
+                //Set Animator Attack 2
+            }
+            else if (currentComboState == ComboState.Attack3)
+            {
+                //Set Animator Attack 3
+                //return
+            }
+
+        }
+    }
+
+    public void ResetComboState()
+    {
+        if(activateTimerToReset)
+        {
+            currentComboTimer -= Time.deltaTime;
+
+            if(currentComboTimer <= 0f)
+            {
+                currentComboState = ComboState.None;
+
+                activateTimerToReset = false;
+                currentComboTimer = defaultComboTimer;
+            }
+        }
     }
     #endregion
 }
