@@ -284,7 +284,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 197418511}
-  m_LocalRotation: {x: -0.032424808, y: 0.96717614, z: -0.16352679, w: -0.1917759}
+  m_LocalRotation: {x: -0.032424767, y: 0.9671762, z: -0.16352679, w: -0.19177571}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -974,7 +974,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1256445038}
-  m_LocalRotation: {x: -0.039106842, y: 0.96087074, z: -0.19722605, w: -0.19052564}
+  m_LocalRotation: {x: -0.0391068, y: 0.96087074, z: -0.19722605, w: -0.19052541}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1154,7 +1154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be76e5f14cfee674cb30b491fb72b09b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boost: 3.7
+  boost: 3.5
   positionLerpTime: 0.2
   mouseSensitivityCurve:
     serializedVersion: 2
@@ -1232,8 +1232,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_LocalRotation: {x: -0.032424808, y: 0.96717614, z: -0.1635268, w: -0.19177587}
-  m_LocalPosition: {x: -3.7190325, y: 16.369999, z: 6.2503896}
+  m_LocalRotation: {x: -0.032424767, y: 0.9671762, z: -0.16352679, w: -0.19177566}
+  m_LocalPosition: {x: -3.7190351, y: 16.369999, z: 6.250391}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1430,7 +1430,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1835248933}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.7190325, y: 16.369999, z: 6.2503896}
+  m_LocalPosition: {x: -3.7190351, y: 16.369999, z: 6.250391}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1256445040}
@@ -1505,7 +1505,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020944360}
-  m_LocalRotation: {x: -0.025768375, y: 0.9722561, z: -0.12995669, w: -0.19278318}
+  m_LocalRotation: {x: -0.025768347, y: 0.9722561, z: -0.12995669, w: -0.19278294}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2231,7 +2231,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 1.5
-  m_Radius: 1.12
+  m_Radius: 0.75
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08

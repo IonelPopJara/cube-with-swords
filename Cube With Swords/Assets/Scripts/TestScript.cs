@@ -145,7 +145,7 @@ public class TestScript : MonoBehaviour
     public void HandleInputs()
     {
         movementInput = input.Current.MoveInputRaw;
-        isGrounded =  GetGroundedStatus();
+        isGrounded = characterController.isGrounded;
         jumpInput = input.Current.JumpInput;
         dashInput = input.Current.DashInput;
 
