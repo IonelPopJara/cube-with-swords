@@ -5,6 +5,8 @@
  *  Dash Reset
  *  Falling State
  *  Damage while dashing
+ *  Reset Attack booleans
+ *  Monitorear los combos fuera del ataque, así solamente debería ingresar al ataque deseado
  */
 
 public enum SimpleStateMachine
@@ -19,11 +21,10 @@ public enum SimpleStateMachine
 
 public enum ComboState
 {
-    None,
-    Attack1,
-    Attack2,
-    Attack3,
-    Attack4
+    Attack_1,
+    Attack_2,
+    Attack_3,
+    Attack_4
 }
 
 public class TestScript : MonoBehaviour
@@ -50,10 +51,8 @@ public class TestScript : MonoBehaviour
 
     private void Update()
     {
-        //HandleInputs();
-        //moveDirection = GetMoveDirection(movementInput);
-        //SetGravity();
-        //characterController.Move(moveDirection * Time.deltaTime);
+        //animator.SetBool("Combo Finished", currentComboState == ComboState.None);
+
         switch (currentState)
         {
             case SimpleStateMachine.Idle:
@@ -79,7 +78,7 @@ public class TestScript : MonoBehaviour
                 }
                 if (lightAttackInput)
                 {
-                    StartAttack();
+                    StartAttack(currentComboState);
                     currentState = SimpleStateMachine.Attacking;
                 }
 
@@ -102,7 +101,7 @@ public class TestScript : MonoBehaviour
                 }
                 if (lightAttackInput)
                 {
-                    StartAttack();
+                    StartAttack(currentComboState);
                     currentState = SimpleStateMachine.Attacking;
                 }
                 characterController.Move(moveDirection * Time.deltaTime);
@@ -131,10 +130,13 @@ public class TestScript : MonoBehaviour
                 break;
             case SimpleStateMachine.Attacking:
                 HandleInputs();
-                ComboAttacks();
-                ResetComboState();
-                //if (animator.GetBool("Attack") == false)
-                //    currentState = SimpleStateMachine.Moving;
+                //ComboAttacks();
+                //ResetComboState();
+                if (animator.GetBool(currentComboState.ToString()) == false) //if(ComboFinishedTest())
+                {
+                    //animator.applyRootMotion = false;
+                    currentState = SimpleStateMachine.Moving;
+                }
                 break;
             case SimpleStateMachine.Falling:
                 HandleInputs();
@@ -312,15 +314,32 @@ public class TestScript : MonoBehaviour
 
     #region Attacks
     [Header("Combo Attacks Debug")]
+    public bool isAttacking;
     public bool activateTimerToReset;
     public float defaultComboTimer = 0.4f;
     public float currentComboTimer;
 
-    public void StartAttack()
+    public void StartAttack(ComboState attack)
     {
+        //StartComboAttacks();
         animator.applyRootMotion = true;
-        animator.SetBool("Attack", true);
+        animator.SetBool(attack.ToString(), true);
+        //animator.SetBool("Attack", true);
+        //animator.SetBool("Attack 1", true);
     }
+
+    // Me sera util si quiero activar root motion aca
+    void Attack(string attack)
+    {
+        animator.SetBool(attack, true);
+    }
+
+    //bool ComboFinishedTest()
+    //{
+    //    return !animator.GetBool("Attack 1") && !animator.GetBool("Attack 2") && !animator.GetBool("Attack 3") && currentComboState == ComboState.None;
+    //}
+
+    // Animation Events
     public void AttackFinished()
     {
         animator.applyRootMotion = false;
@@ -328,28 +347,54 @@ public class TestScript : MonoBehaviour
         animator.SetBool("Attack", false);
     }
 
+    public void Attack1Finished()
+    {
+        Debug.Log("Attack 1 finished");
+        animator.SetBool("Attack_1", false);
+        //animator.applyRootMotion = false;
+    }
+
+    public void Attack2Finished()
+    {
+        Debug.Log("Attack 2 finished");
+        animator.SetBool("Attack_2", false);
+        //animator.applyRootMotion = false;
+    }
+
+    public void Attack3Finished()
+    {
+        Debug.Log("Attack 3 finished");
+        animator.SetBool("Attack_3", false);
+        //animator.applyRootMotion = false;
+    }
+
+    public void StartComboAttacks()
+    {
+        currentComboState = ComboState.Attack_1;
+        activateTimerToReset = true;
+        currentComboTimer = defaultComboTimer;
+    }
+
     public void ComboAttacks()
     {
-        if(currentComboState <= ComboState.Attack3)
+        if(lightAttackInput)
         {
-            currentComboState++;
-            activateTimerToReset = true;
-            currentComboTimer = defaultComboTimer;
+            if (currentComboState <= ComboState.Attack_2)
+            {
+                currentComboState++;
+                activateTimerToReset = true;
+                currentComboTimer = defaultComboTimer;
 
-            if(currentComboState == ComboState.Attack1)
-            {
-                //Set Animator Attack 1
+                if (currentComboState == ComboState.Attack_2)
+                {
+                    animator.SetBool("Attack 2", true);
+                }
+                else if (currentComboState == ComboState.Attack_3)
+                {
+                    animator.SetBool("Attack 3", true);
+                    return;
+                }
             }
-            else if (currentComboState == ComboState.Attack2)
-            {
-                //Set Animator Attack 2
-            }
-            else if (currentComboState == ComboState.Attack3)
-            {
-                //Set Animator Attack 3
-                //return
-            }
-
         }
     }
 
@@ -361,7 +406,7 @@ public class TestScript : MonoBehaviour
 
             if(currentComboTimer <= 0f)
             {
-                currentComboState = ComboState.None;
+                //currentComboState = ComboState.None;
 
                 activateTimerToReset = false;
                 currentComboTimer = defaultComboTimer;
