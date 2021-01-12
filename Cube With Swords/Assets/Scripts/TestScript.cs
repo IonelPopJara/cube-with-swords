@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 /*
  * To do list:
@@ -351,21 +352,21 @@ public class TestScript : MonoBehaviour
     {
         Debug.Log("Attack 1 finished");
         animator.SetBool("Attack_1", false);
-        //animator.applyRootMotion = false;
+        StartCoroutine(DisableRootMotion(0.05f));
     }
 
     public void Attack2Finished()
     {
         Debug.Log("Attack 2 finished");
         animator.SetBool("Attack_2", false);
-        //animator.applyRootMotion = false;
+        StartCoroutine(DisableRootMotion(0.05f));
     }
 
     public void Attack3Finished()
     {
         Debug.Log("Attack 3 finished");
         animator.SetBool("Attack_3", false);
-        //animator.applyRootMotion = false;
+        StartCoroutine(DisableRootMotion(0.05f));
     }
 
     public void StartComboAttacks()
@@ -379,21 +380,11 @@ public class TestScript : MonoBehaviour
     {
         if(lightAttackInput)
         {
-            if (currentComboState <= ComboState.Attack_2)
+            if (currentComboState <= ComboState.Attack_3)
             {
                 currentComboState++;
                 activateTimerToReset = true;
                 currentComboTimer = defaultComboTimer;
-
-                if (currentComboState == ComboState.Attack_2)
-                {
-                    animator.SetBool("Attack 2", true);
-                }
-                else if (currentComboState == ComboState.Attack_3)
-                {
-                    animator.SetBool("Attack 3", true);
-                    return;
-                }
             }
         }
     }
@@ -412,6 +403,12 @@ public class TestScript : MonoBehaviour
                 currentComboTimer = defaultComboTimer;
             }
         }
+    }
+
+    private IEnumerator DisableRootMotion(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.applyRootMotion = false;
     }
     #endregion
 }
